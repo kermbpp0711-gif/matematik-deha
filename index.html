@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Matematik Dehası</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fc;--grid:#dde4f1;--fg:#14213d;--mut:#5a6785;--card:#fff;--ln:#c9d3e8;--ac:#2b4bdb;--ok:#13804a;--okb:#e3f6ec;--no:#c8243a;--nob:#fdeaed;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1526;--grid:#1a2340;--fg:#e8edfb;--mut:#9aa7c7;--card:#18213a;--ln:#2d3a5f;--ac:#8aa2ff;--ok:#5fd59a;--okb:#12301f;--no:#ff7b8c;--nob:#3a1620}}
+:root[data-theme="dark"]{--bg:#0f1526;--grid:#1a2340;--fg:#e8edfb;--mut:#9aa7c7;--card:#18213a;--ln:#2d3a5f;--ac:#8aa2ff;--ok:#5fd59a;--okb:#12301f;--no:#ff7b8c;--nob:#3a1620}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg) linear-gradient(var(--grid) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/28px 28px;color:var(--fg);font:400 16px/1.55 Lexend,system-ui,sans-serif;min-height:100vh}
+main{max-width:680px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:2.1rem;font-weight:800;margin:.4em 0 .1em;letter-spacing:-.02em}
+h2{font-size:1.15rem;margin:1.2em 0 .4em}
+.sub{color:var(--mut);margin:0 0 1rem}
+.card{background:var(--card);border:2px solid var(--ln);border-radius:14px;padding:18px;margin:12px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip,.btn,.opt{font:inherit;color:inherit;cursor:pointer}
+.chip{border:2px solid var(--ln);background:var(--card);border-radius:99px;padding:6px 14px}
+.chip.on{border-color:var(--ac);background:var(--ac);color:var(--bg)}
+.btn{border:0;background:var(--ac);color:var(--bg);font-weight:600;border-radius:10px;padding:12px 22px;margin:6px 8px 0 0}
+.btn.alt{background:transparent;color:var(--fg);border:2px solid var(--ln)}
+.top{display:flex;justify-content:space-between;color:var(--mut);font-size:.9rem;gap:8px}
+.q{font-size:1.15rem;font-weight:600;margin:0 0 14px}
+.opt{display:flex;gap:12px;width:100%;text-align:left;background:var(--card);border:2px solid var(--ln);border-radius:10px;padding:11px 14px;margin:8px 0}
+.opt b{color:var(--ac);min-width:1.2em}
+.opt:hover:not(:disabled){border-color:var(--ac)}
+.opt.ok{border-color:var(--ok);background:var(--okb)}
+.opt.no{border-color:var(--no);background:var(--nob)}
+.opt:disabled{cursor:default}
+.fb{border-left:6px solid var(--no);background:var(--nob);border-radius:10px;padding:14px 16px;margin:12px 0}
+.fb.good{border-color:var(--ok);background:var(--okb)}
+.fb h3{margin:0 0 6px;font-size:1.05rem}
+.fb p{margin:6px 0}
+.lbl{font-weight:600}
+.bar{height:12px;background:var(--ln);border-radius:6px;overflow:hidden;margin:4px 0 12px}
+.bar i{display:block;height:100%;background:var(--ok)}
+.bar i.lo{background:var(--no)}
+select{font:inherit;padding:8px;border-radius:8px;border:2px solid var(--ln);background:var(--card);color:var(--fg)}
+.row{display:flex;justify-content:space-between;gap:10px}
+.big{font-size:2.6rem;font-weight:800;margin:0}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+</style></head><body><main id="app"></main>
+<script>
+const ri=(a,b)=>Math.floor(Math.random()*(b-a+1))+a,pk=a=>a[ri(0,a.length-1)],gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const N=n=>String(n).replace('-','−'),fr=(n,d)=>{const g=gcd(n,d);n/=g;d/=g;return d==1?N(n):N(n)+'/'+d};
+const sg=v=>v<0?` − ${-v}`:` + ${v}`,sh=v=>v?'x'+sg(v):'x',lin=(a,b)=>`${a==1?'':a==-1?'−':N(a)}x${b?sg(b):''}`;
+const T={tri:'Dik Üçgende Trigonometrik Oranlar',oz:'Trigonometrik Özdeşlikler',sin:'Sinüs Teoremi',kos:'Kosinüs Teoremi',al:'Üçgende Alan'};
+const TR=[[3,4,5],[5,12,13],[8,15,17],[7,24,25]],G=[];
+const RP='sin = karşı/hipotenüs, cos = komşu/hipotenüs, tan = karşı/komşu, cot = komşu/karşı';
+const SPR='sin30° = cos60° = 1/2; sin45° = cos45° = √2/2; sin60° = cos30° = √3/2; tan30° = √3/3, tan45° = 1, tan60° = √3';
+// ---- Trigonometrik oranlar
+G.push(['tri',()=>{const[a,b,c]=pk(TR).map(x=>x*ri(1,3)),f=pk(['sin','cos','tan','cot']),v={sin:fr(a,c),cos:fr(b,c),tan:fr(a,b),cot:fr(b,a)};
+return{q:`Dik üçgen ABC’de B = 90°, |AB| = ${b} cm, |BC| = ${a} cm, |AC| = ${c} cm’dir. ${f} A kaçtır?`,a:v[f],w:[...Object.keys(v).filter(k=>k!=f).map(k=>v[k]),fr(c,a)],fig:{sh:'r',rt:'B',s:{ab:b+' cm',bc:a+' cm',ac:c+' cm'}},rule:RP,sol:`A’nın karşısı |BC| = ${a}, komşusu |AB| = ${b}, hipotenüs |AC| = ${c}. ${f} A = ${v[f]}.`,tip:'Karşı ve komşu kenarı A açısına göre belirle; hipotenüs dik açının karşısındaki kenardır.'}}]);
+G.push(['tri',()=>{const[a,b,c]=pk(TR),f=pk(['cos','tan']),r=f=='cos'?fr(b,c):fr(a,b);
+return{q:`x dar açı ve sin x = ${a}/${c} ise ${f} x kaçtır?`,a:r,w:[fr(b,c),fr(a,b),fr(c,b),fr(b,a),fr(c,a)],fig:{sh:'r',rt:'B',an:{A:'x'}},rule:'Pisagor bağıntısı + trigonometrik oranlar',sol:`sin x = karşı/hipotenüs → karşı = ${a}, hipotenüs = ${c}. Pisagor: komşu = √(${c}² − ${a}²) = ${b}. ${f} x = ${r}.`,tip:'Eksik kenarı Pisagor ile bulmadan cos veya tan hesaplanamaz.'}}]);
+G.push(['tri',()=>{const a=ri(1,4),b=ri(1,4),c=ri(1,3);
+return{q:`${a}·sin30° + ${b}·cos60° + ${c}·tan45° işleminin sonucu kaçtır?`,a:fr(a+b+2*c,2),w:[fr(a+b+c,2),N(a+b+c),fr(a+b+2*c,4),fr(a+b+3*c,2)],rule:'Özel açılar: sin30° = cos60° = 1/2, tan45° = 1',sol:`${a}·(1/2) + ${b}·(1/2) + ${c}·1 = ${fr(a+b+2*c,2)}.`,tip:'30°, 45°, 60° özel açı değerlerini tablo olarak öğren.'}}]);
+const SP=[['tan60° · tan30°','1','√3 · √3/3 = 1'],['sin45° · cos45°','1/2','√2/2 · √2/2 = 2/4 = 1/2'],['tan60° · cot30°','3','√3 · √3 = 3'],['sin60° · cos30°','3/4','√3/2 · √3/2 = 3/4'],['sin60° / cos30°','1','√3/2 ÷ √3/2 = 1'],['tan45° + sin²30° + cos²30°','2','1 + 1/4 + 3/4 = 2'],['sin60° / cos60°','√3','(√3/2) ÷ (1/2) = √3'],['tan30° / tan60°','1/3','(√3/3) ÷ √3 = 1/3'],['4·sin30°·cos60°','1','4 · 1/2 · 1/2 = 1'],['2·sin45°·cos45°','1','2 · √2/2 · √2/2 = 1']],SPW=['1','1/2','3/4','√3','√3/3','2','3','1/3','√2/2','1/4'];
+G.push(['tri',()=>{const[e,a,s]=pk(SP);return{q:`${e} işleminin sonucu kaçtır?`,a,w:SPW,rule:SPR,sol:s+'.',tip:'tan30° ile tan60° değerlerini birbirine karıştırma: tan30° = √3/3, tan60° = √3.'}}]);
+G.push(['tri',()=>{const t=ri(0,2);
+if(t==0){const L=ri(2,10)*2;return{q:`${L} m uzunluğundaki bir merdiven yer ile 30°’lik açı yapacak şekilde duvara dayanıyor. Merdivenin duvarda ulaştığı yükseklik kaç metredir?`,a:L/2+' m',w:[L+' m',2*L+' m',L/2+2+' m',L*3/2+' m'],fig:{sh:'r',rt:'B',s:{ac:L+' m',ab:'?'},an:{C:'30°'}},rule:'sin30° = karşı/hipotenüs = 1/2',sol:`Yükseklik = ${L}·sin30° = ${L}·1/2 = ${L/2} m.`,tip:'Yer ile yapılan açının karşısındaki kenar duvar yüksekliğidir.'}}
+if(t==1){const L=ri(2,10)*2;return{q:`${L} m uzunluğundaki bir merdiven yer ile 60°’lik açı yapacak şekilde duvara dayanıyor. Merdivenin alt ucu duvardan kaç metre uzaktadır?`,a:L/2+' m',w:[L+' m',2*L+' m',L/2+2+' m',L*3/2+' m'],fig:{sh:'r',rt:'B',s:{ac:L+' m',bc:'?'},an:{C:'60°'}},rule:'cos60° = komşu/hipotenüs = 1/2',sol:`Uzaklık = ${L}·cos60° = ${L/2} m.`,tip:'60° açıya komşu kenar yer üzerindeki uzaklıktır; sin ile cos’u karıştırma.'}}
+const d=ri(3,20)*2;return{q:`Bir ağacın dibinden ${d} m uzaktaki noktadan ağacın tepesi 45°’lik açıyla görülüyor. Ağacın boyu kaç metredir?`,a:d+' m',w:[d/2+' m',2*d+' m',d+2+' m',d*2-d/2+' m'],fig:{sh:'r',rt:'B',s:{bc:d+' m',ab:'?'},an:{C:'45°'}},rule:'tan45° = 1 = karşı/komşu',sol:`Boy = ${d}·tan45° = ${d}·1 = ${d} m.`,tip:'tan45° = 1 olduğundan karşı ve komşu kenar eşittir.'}}]);
+// ---- Özdeşlikler
+const IL=[['1 − sin²x','cos²x','sin²x + cos²x = 1 olduğundan 1 − sin²x = cos²x'],['(1 − cos x)(1 + cos x)','sin²x','(a − b)(a + b) = a² − b² ⇒ 1 − cos²x = sin²x'],['sin x · cot x','cos x','cot x = cos x / sin x ⇒ sin x · cos x / sin x = cos x'],['tan x · cos x','sin x','tan x = sin x / cos x ⇒ (sin x / cos x) · cos x = sin x'],['sin²x / (1 − cos²x)','1','1 − cos²x = sin²x olduğundan oran 1’dir'],['cos²x − 1','−sin²x','cos²x − 1 = −(1 − cos²x) = −sin²x'],['sin²x + cos²x + tan x · cot x','2','1 + 1 = 2 (tan x · cot x = 1)'],['cos x / (1 − sin²x)','1/cos x','1 − sin²x = cos²x ⇒ cos x / cos²x = 1/cos x'],['(sin x + cos x)² − 2·sin x·cos x','1','sin²x + 2sin x cos x + cos²x − 2sin x cos x = 1']],ILW=['sin²x','cos²x','sin x','cos x','tan x','cot x','1','2','−sin²x','−cos²x','1/cos x','0'];
+G.push(['oz',()=>{const[e,a,s]=pk(IL);return{q:`x dar açı olmak üzere ${e} ifadesi aşağıdakilerden hangisine eşittir?`,a,w:ILW,rule:'sin²x + cos²x = 1, tan x = sin x / cos x, cot x = cos x / sin x',sol:s+'.',tip:'Özdeşlikte kareleri çevirirken işaret hatası yapma: 1 − sin²x = cos²x ama cos²x − 1 = −sin²x.'}}]);
+G.push(['oz',()=>{const[a,b,c]=pk(TR),s=Math.random()<.5;
+return s?{q:`x dar açı ve sin x = ${a}/${c} ise cos²x kaçtır?`,a:fr(b*b,c*c),w:[fr(a*a,c*c),fr(b,c),fr(a,c),fr(c*c-a,c*c)],rule:'sin²x + cos²x = 1',sol:`cos²x = 1 − sin²x = 1 − ${a*a}/${c*c} = ${fr(b*b,c*c)}.`,tip:'Önce sin x’i kareye al; sonra 1’den çıkar.'}:{q:`x dar açı ve cos x = ${b}/${c} ise sin²x kaçtır?`,a:fr(a*a,c*c),w:[fr(b*b,c*c),fr(a,c),fr(b,c),fr(c*c-b,c*c)],rule:'sin²x + cos²x = 1',sol:`sin²x = 1 − cos²x = 1 − ${b*b}/${c*c} = ${fr(a*a,c*c)}.`,tip:'Karekök almayı unutup sin x ile sin²x’i karıştırma.'}}]);
+G.push(['oz',()=>{if(Math.random()<.4){const p=ri(5,85);return{q:`sin${p}° = cos α ise α kaç derecedir?`,a:N(90-p)+'°',w:[p+'°',N(90+p)+'°',N(180-p)+'°',N(p-90)+'°'],rule:'Tümler açılar: sin x = cos(90° − x)',sol:`sin${p}° = cos(90° − ${p}°) = cos${90-p}°. α = ${90-p}°.`,tip:'Tümler açıların toplamı 90°’dir (180° değil).'}}
+const x=ri(5,12),a=ri(2,4),b=ri(1,3),c=90-(a+b)*x;
+return{q:`Tüm açılar dar açı olmak üzere sin${a}x = cos(${b}x + ${c}°) ise x kaç derecedir?`,a:x+'°',w:[x+2+'°',x-2+'°',x+4+'°',x*2+'°'],rule:'sin α = cos β ise α + β = 90°',sol:`${a}x + ${b}x + ${c}° = 90° ⇒ ${a+b}x = ${90-c}° ⇒ x = ${x}°.`,tip:'Denklemi 90° eşitlerken derece değerini sağ tarafa geçirmeyi unutma.'}}]);
+// ---- Sinüs, kosinüs, alan
+const R2=k=>`${k}√2`,R3=k=>`${k}√3`,SV={30:'1/2',45:'√2/2',60:'√3/2',90:'1'};
+G.push(['sin',()=>{const k=ri(2,9),[A,a,B,r]=pk([[30,N(k),90,N(2*k)],[45,N(k),90,R2(k)],[60,R3(k),30,N(k)],[45,R2(k),30,N(k)],[30,N(k),45,R2(k)],[30,N(k),60,R3(k)]]);
+return{q:`ABC üçgeninde m(A) = ${A}°, m(B) = ${B}° ve |BC| = ${a} cm ise |AC| kaç cm’dir?`,a:r,w:[N(k),N(2*k),R2(k),R3(k),N(3*k),R2(2*k)],fig:{sh:B==90?'r':'a',rt:B==90?'B':'',an:{A:A+'°',B:B==90?'':B+'°'},s:{bc:a+' cm',ac:'?'}},rule:'Sinüs teoremi: a/sinA = b/sinB = c/sinC = 2R',sol:`|BC|/sin${A}° = |AC|/sin${B}° ⇒ ${a}/(${SV[A]}) = |AC|/(${SV[B]}) ⇒ |AC| = ${r}.`,tip:'Kenar, karşısındaki açının sinüsüyle eşleşir: |BC| ↔ A, |AC| ↔ B.'}}]);
+G.push(['sin',()=>{const k=ri(2,9),[A,a]=pk([[30,N(k)],[60,R3(k)],[45,R2(k)],[90,N(2*k)]]);
+return{q:`ABC üçgeninde |BC| = ${a} cm ve m(A) = ${A}° ise ABC üçgeninin çevrel çemberinin yarıçapı kaç cm’dir?`,a:N(k),w:[N(2*k),N(k+2),N(2*k+1),R2(k),R3(k)],fig:{sh:A==90?'rA':'a',rt:A==90?'A':'',an:{A:A+'°'},s:{bc:a+' cm'}},rule:'Sinüs teoremi: a/sinA = 2R',sol:`${a}/sin${A}° = 2R ⇒ 2R = ${N(2*k)} ⇒ R = ${k}.`,tip:'Eşitliğin sağı 2R’dir, R değil; sonda 2’ye bölmeyi unutma.'}}]);
+G.push(['sin',()=>{const k=ri(2,9),[A,a,b,x]=pk([[30,N(k),R2(k),45],[45,R2(k),R3(k),60],[30,N(k),R3(k),60]]);
+return{q:`ABC üçgeninde m(A) = ${A}°, |BC| = ${a} cm, |AC| = ${b} cm ve B dar açı ise m(B) kaç derecedir?`,a:x+'°',w:['30°','45°','60°','90°','120°'],fig:{sh:'a',an:{A:A+'°',B:'?'},s:{bc:a+' cm',ac:b+' cm'}},rule:'Sinüs teoremi: sinB = b·sinA / a',sol:`${a}/sin${A}° = ${b}/sinB ⇒ sinB = ${SV[x]} ⇒ m(B) = ${x}°.`,tip:'Çapraz çarpımı yaparken kenarları karşılarındaki açılarla eşleştir.'}}]);
+const KL=[[3,8,60,7],[5,8,60,7],[7,15,60,13],[8,15,60,13],[3,5,120,7],[8,7,120,13],[5,16,120,19]];
+G.push(['kos',()=>{const[b,c,A,a]=pk(KL);
+return{q:`ABC üçgeninde |AB| = ${c} cm, |AC| = ${b} cm ve m(A) = ${A}° ise |BC| kaç cm’dir?`,a:N(a),w:[N(b+c),N(Math.abs(b-c)),N(a*a),N(a+1),N(a-1)],fig:{sh:A==120?'o':'a',an:{A:A+'°'},s:{ab:c+' cm',ac:b+' cm',bc:'?'}},rule:'Kosinüs teoremi: a² = b² + c² − 2bc·cosA',sol:`|BC|² = ${b}² + ${c}² − 2·${b}·${c}·cos${A}° = ${b*b} + ${c*c} ${A==60?'−':'+'} ${b*c} = ${a*a} ⇒ |BC| = ${a}.`,tip:'cos120° = −1/2 olduğundan 120°’de −2bc·cosA terimi toplama dönüşür.'}}]);
+G.push(['kos',()=>{let a,b,c;do{a=ri(4,10);b=ri(4,10);c=ri(4,10)}while(a>=b+c||b>=a+c||c>=a+b);const n=b*b+c*c-a*a;
+return{q:`ABC üçgeninde |BC| = ${a} cm, |AC| = ${b} cm, |AB| = ${c} cm ise cos A kaçtır?`,a:fr(n,2*b*c),w:[fr(-n,2*b*c),fr(n,b*c),fr(a*a+b*b+c*c,2*b*c),fr(n,2*a*b),fr(a*a+b*b-c*c,2*a*b)],fig:{sh:'a',an:{A:'A'},s:{bc:a+' cm',ac:b+' cm',ab:c+' cm'}},rule:'Kosinüs teoremi: cosA = (b² + c² − a²)/(2bc)',sol:`cos A = (${b*b} + ${c*c} − ${a*a})/(2·${b}·${c}) = ${fr(n,2*b*c)}.`,tip:'A açısının karşısındaki kenar (a) çıkarılan kenardır; paydada 2bc olmalı.'}}]);
+const K3=[[7,3,5,120],[7,5,8,60],[13,7,8,120],[13,8,15,60]];
+G.push(['kos',()=>{const[a,b,c,x]=pk(K3);
+return{q:`ABC üçgeninde |BC| = ${a} cm, |AC| = ${b} cm, |AB| = ${c} cm ise m(A) kaç derecedir?`,a:x+'°',w:['30°','45°','90°','150°',x==60?'120°':'60°'],fig:{sh:x==120?'o':'a',an:{A:'?'},s:{bc:a+' cm',ac:b+' cm',ab:c+' cm'}},rule:'cosA = (b² + c² − a²)/(2bc)',sol:`cos A = (${b*b} + ${c*c} − ${a*a})/(2·${b}·${c}) = ${fr(b*b+c*c-a*a,2*b*c)} ⇒ m(A) = ${x}°.`,tip:'cos negatifse açı 90°’den büyüktür (geniş açı).'}}]);
+const AR={30:['','1/2'],150:['','1/2'],45:['√2','√2/2'],135:['√2','√2/2'],60:['√3','√3/2'],120:['√3','√3/2']};
+G.push(['al',()=>{const b=ri(1,6)*2,c=ri(1,6)*2,A=pk(Object.keys(AR)),[rd,sv]=AR[A],v=b*c/4;
+return{q:`ABC üçgeninde |AB| = ${c} cm, |AC| = ${b} cm ve m(A) = ${A}° ise ABC üçgeninin alanı kaç cm²’dir?`,a:`${v}${rd}`,w:[N(b*c/2),`${b*c/2}√3`,`${b*c/2}√2`,N(b*c),`${v}√3`,`${v}√2`,N(v)],fig:{sh:A>90?'o':'a',an:{A:A+'°'},s:{ab:c+' cm',ac:b+' cm'}},rule:'Alan = ½·b·c·sinA (iki kenar ve aralarındaki açı)',sol:`Alan = ½·${b}·${c}·sin${A}° = ½·${b}·${c}·${sv} = ${v}${rd}.`,tip:'sin150° = sin30° ve sin120° = sin60° (180°’ye tümler açıların sinüsü eşittir).'}}]);
+G.push(['al',()=>{const a=ri(2,7)*2,h=ri(3,10);
+return{q:`ABC üçgeninde |BC| = ${a} cm ve BC kenarına ait yükseklik ${h} cm ise alan kaç cm²’dir?`,a:N(a*h/2),w:[N(a*h),N(a+h),N(a*h/4),N(a*h/2+a)],fig:{sh:'a',s:{bc:a+' cm'},h:h+' cm'},rule:'Alan = ½·taban·yükseklik',sol:`Alan = ½·${a}·${h} = ${a*h/2}.`,tip:'Üçgenin alanı dikdörtgenin yarısıdır; ½ çarpanını unutma.'}}]);
+G.push(['al',()=>{const b=ri(1,6)*2,c=ri(1,6)*2,[A,rd]=pk([[30,''],[45,'√2'],[60,'√3']]),v=b*c/4;
+return{q:`ABC üçgeninde |AB| = ${c} cm, |AC| = ${b} cm, A dar açı ve Alan(ABC) = ${v}${rd} cm² ise m(A) kaç derecedir?`,a:A+'°',w:['30°','45°','60°','90°','120°'],fig:{sh:'a',an:{A:'?'},s:{ab:c+' cm',ac:b+' cm'}},rule:'Alan = ½·b·c·sinA ⇒ sinA = 2·Alan/(b·c)',sol:`sinA = 2·${v}${rd}/(${b}·${c}) = ${SV[A]} ⇒ m(A) = ${A}°.`,tip:'Alan formülünü sinA için yeniden düzenle; 2’yi karşıya çarpan olarak geçir.'}}]);
+G.push(['al',()=>{const c=ri(2,8)*2,B=pk([30,45,60]),h={30:N(c/2),60:`${c/2}√3`,45:`${c/2}√2`}[B];
+return{q:`ABC üçgeninde |AB| = ${c} cm ve m(B) = ${B}°’dir. A köşesinden BC kenarına indirilen yükseklik kaç cm’dir?`,fig:{sh:'a',an:{B:B+'°'},s:{ab:c+' cm'},h:'h = ?'},a:h,w:[N(c),N(c/2),`${c/2}√3`,`${c/2}√2`,`${c}√3`,`${c}√2`],rule:'Yükseklik = |AB|·sinB (dik üçgende B’nin karşısındaki kenar)',sol:`A’dan BC’ye inen dikle oluşan dik üçgende h, B’nin karşısındadır: h = ${c}·sin${B}° = ${h}.`,tip:'Yükseklik hipotenüs (|AB|) ile sinüs çarpılarak bulunur; cos ile değil.'}}]);
+G.push(['al',()=>{const a=ri(1,6)*2,c=ri(1,6)*2,B=pk([30,60]),h=B==30?N(c/2):`${c/2}√3`,S=B==30?N(a*c/4):`${a*c/4}√3`;
+return{q:`ABC üçgeninde |BC| = ${a} cm, |AB| = ${c} cm ve m(B) = ${B}° ise ABC üçgeninin alanı kaç cm²’dir? (Önce A’dan BC’ye inen yüksekliği bulun.)`,fig:{sh:'a',an:{B:B+'°'},s:{bc:a+' cm',ab:c+' cm'},h:'h'},a:S,w:[N(a*c/2),`${a*c/2}√3`,N(a*c),`${a*c/4}√3`,N(a*c/4)],rule:'Alan = ½·taban·yükseklik, yükseklik = kenar·sin(açı)',sol:`h = ${c}·sin${B}° = ${h}. Alan = ½·${a}·${h} = ${S}.`,tip:'Yüksekliği bulmadan alan yazılamaz; taban ile yükseklik birbirine dik olmalı.'}}]);
+const PT={r:{A:[40,30],B:[40,150],C:[260,150]},rA:{A:[40,150],B:[40,30],C:[260,150]},a:{A:[130,30],B:[40,150],C:[260,150]},o:{A:[150,85],B:[40,150],C:[260,150]}};
+function fig(f){if(!f)return'';const P=PT[f.sh],V=['A','B','C'],G0=[0,1].map(i=>(P.A[i]+P.B[i]+P.C[i])/3),tx=(x,y,t,w)=>t?`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" style="fill:var(--fg);font-size:${w||14}px;font-weight:600">${t}</text>`:'',mv=(p,q,d)=>{const v=[q[0]-p[0],q[1]-p[1]],n=Math.hypot(...v)||1;return[p[0]+v[0]/n*d,p[1]+v[1]/n*d]};
+let g=`<polygon points="${P.A} ${P.B} ${P.C}" style="fill:none;stroke:var(--ac);stroke-width:3;stroke-linejoin:round"/>`;
+V.forEach(k=>{const p=P[k],o=mv(G0,p,Math.hypot(p[0]-G0[0],p[1]-G0[1])+15);g+=tx(o[0],o[1],k,16)});
+[['ab','A','B'],['bc','B','C'],['ac','A','C']].forEach(([k,p,q])=>{const s=f.s&&f.s[k];if(s){const m=[(P[p][0]+P[q][0])/2,(P[p][1]+P[q][1])/2],o=mv(G0,m,Math.hypot(m[0]-G0[0],m[1]-G0[1])+16);g+=tx(o[0],o[1],s,13)}});
+V.forEach(k=>{const a=f.an&&f.an[k];if(a){const o=mv(P[k],G0,k=='A'&&f.sh=='o'?26:34);g+=tx(o[0],o[1],a,13)}});
+if(f.rt){const p=P[f.rt],[q,r]=V.filter(k=>k!=f.rt).map(k=>mv(p,P[k],13));g+=`<polyline points="${q} ${[q[0]+r[0]-p[0],q[1]+r[1]-p[1]]} ${r}" style="fill:none;stroke:var(--fg);stroke-width:1.5"/>`}
+if(f.h){const A=P.A,F=[A[0],150];g+=`<line x1="${A[0]}" y1="${A[1]}" x2="${F[0]}" y2="${F[1]}" style="stroke:var(--no);stroke-width:2;stroke-dasharray:5 4"/><polyline points="${F[0]-12},150 ${F[0]-12},138 ${F[0]},138" style="fill:none;stroke:var(--fg);stroke-width:1.5"/>`+tx(A[0]+16,(A[1]+150)/2,f.h,13)}
+return`<svg viewBox="0 0 300 185" style="width:100%;max-width:340px;display:block;margin:6px auto 0" role="img" aria-label="Üçgen şekli">${g}</svg><p class="sub" style="text-align:center;margin:0 0 10px;font-size:.8rem">Şekil ölçekli değildir.</p>`}
+// ---- Uygulama
+const app=document.getElementById('app'),KEY='mdeha8';let sel=new Set(Object.keys(T)),tot=10,S,seen;
+let st={};try{st=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+function build(){const g=G.filter(x=>sel.has(x[0]));let tr=0,o,q;
+do{const[t,f]=pk(g);q=f();q.t=t;tr++}while(seen.has(q.q)&&tr<8);seen.add(q.q);
+const a=String(q.a);let w=[...new Set(q.w.map(String))].filter(x=>x!==a);
+if(w.length<4&&/^[−\d]+$/.test(a)){const v=+a.replace('−','-');for(let d=1;w.length<4;d++)[v+d,v-d].forEach(y=>{const s=N(y);if(w.length<4&&s!==a&&!w.includes(s))w.push(s)})}
+while(w.length<4){const s=`${ri(1,9)}/${ri(2,12)}`;if(s!==a&&!w.includes(s))w.push(s)}w=w.sort(()=>Math.random()-.5).slice(0,4);o=[a,...w].sort(()=>Math.random()-.5);return{...q,a,o,ci:o.indexOf(a)}}
+function home(){const all=Object.entries(st).reduce((s,[k,v])=>[s[0]+v[0],s[1]+v[1]],[0,0]);
+app.innerHTML=`<h1>Matematik Dehası</h1><p class="sub">10. sınıf matematik, 1. dönem 1. yazılı hazırlığı: trigonometri, sinüs ve kosinüs teoremleri, üçgende alan. Yanlış yaptığında kuralı ve eksiğini görürsün.</p>
+<div class="card"><p class="lbl">Konular</p><div class="chips">${Object.entries(T).map(([k,v])=>`<button class="chip ${sel.has(k)?'on':''}" data-k="${k}">${v}</button>`).join('')}</div>
+<p class="lbl" style="margin-top:16px">Soru sayısı</p><select id="n"><option value="5">5 soru</option><option value="10">10 soru</option><option value="20">20 soru</option></select>
+<p><button class="btn" id="go">Başla</button></p></div>
+${all[0]+all[1]?`<div class="card"><p class="lbl">Genel istatistiğin</p>${stats(st)}<button class="btn alt" id="rs">İstatistiği sıfırla</button></div>`:''}
+<p class="sub">Kesin kapsam için öğretmeninin yıllık planına da bak.</p>`;
+app.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const k=b.dataset.k;sel.has(k)?(sel.size>1&&sel.delete(k)):sel.add(k);home()});
+if(!tot)tot=10;document.getElementById('n').value=tot;
+document.getElementById('go').onclick=()=>{tot=+document.getElementById('n').value;S={n:0,ok:0,ses:{},miss:{}};seen=new Set();next()};
+const r=document.getElementById('rs');if(r)r.onclick=()=>{st={};save();home()}}
+function stats(d){return Object.entries(T).filter(([k])=>d[k]&&d[k][0]+d[k][1]).map(([k,v])=>{const[o,n]=d[k],p=Math.round(100*o/(o+n));return`<div class="row"><span>${v}</span><span>%${p} (${o}/${o+n})</span></div><div class="bar"><i class="${p<70?'lo':''}" style="width:${p}%"></i></div>`}).join('')}
+function next(){if(tot&&S.n>=tot)return end();const q=build();S.cur=q;S.n++;
+app.innerHTML=`<div class="top"><span>${T[q.t]}</span><span>${S.n}${tot?' / '+tot:''} · doğru: ${S.ok}</span></div>
+<div class="card"><p class="q">${q.q}</p>${fig(q.fig)}${q.o.map((s,i)=>`<button class="opt" data-i="${i}"><b>${'ABCDE'[i]}</b><span>${s}</span></button>`).join('')}</div><div id="fb"></div>`;
+app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(+b.dataset.i))}
+function pick(i){const q=S.cur,good=i==q.ci,bs=app.querySelectorAll('.opt');bs.forEach((b,j)=>{b.disabled=true;if(j==q.ci)b.classList.add('ok');else if(j==i)b.classList.add('no')});
+st[q.t]=st[q.t]||[0,0];S.ses[q.t]=S.ses[q.t]||[0,0];st[q.t][good?0:1]++;S.ses[q.t][good?0:1]++;save();
+if(good)S.ok++;else S.miss[q.rule]={t:T[q.t],tip:q.tip};
+const last=tot&&S.n>=tot;
+document.getElementById('fb').innerHTML=`<div class="fb ${good?'good':''}"><h3>${good?'Doğru!':'Yanlış. Doğru cevap: '+'ABCDE'[q.ci]+') '+q.a}</h3>
+<p><span class="lbl">Kullanılan kural:</span> ${q.rule}</p><p><span class="lbl">Çözüm:</span> ${q.sol}</p>${good?'':`<p><span class="lbl">Eksiğin:</span> ${q.tip}</p>`}</div>
+<button class="btn" id="nx">${last?'Sonucu gör':'Sonraki soru'}</button>${tot?'':'<button class="btn alt" id="fin">Bitir</button>'}`;
+document.getElementById('nx').onclick=next;const f=document.getElementById('fin');if(f)f.onclick=end;
+document.getElementById('nx').scrollIntoView({block:'nearest'})}
+function end(){const n=tot?Math.min(S.n,tot):S.n-(S.cur&&!S.answered?0:0),weak=Object.entries(S.ses).filter(([k,v])=>v[1]&&v[0]/(v[0]+v[1])<.7).map(([k])=>T[k]),ms=Object.entries(S.miss);
+const tt=Object.values(S.ses).reduce((s,v)=>s+v[0]+v[1],0);
+app.innerHTML=`<h1>Sonuç</h1><div class="card"><p class="big">${S.ok} / ${tt}</p><p class="sub">${tt?'Başarı: %'+Math.round(100*S.ok/tt):'Henüz soru çözmedin.'}</p>${stats(S.ses)}</div>
+<div class="card"><h2 style="margin-top:0">Eksik konuların</h2>${weak.length?'<p>Şu konulara tekrar çalış: <b>'+weak.join(', ')+'</b></p>':'<p>Bu turda %70 altında kalan konu yok. Sürdür!</p>'}
+${ms.length?'<p class="lbl">Yanlış yaptığın sorulardaki kurallar</p>'+ms.map(([r,v])=>`<div class="fb"><p><span class="lbl">${v.t}:</span> ${r}</p><p>${v.tip}</p></div>`).join(''):''}</div>
+<button class="btn" id="again">Yeniden başla</button><button class="btn alt" id="hm">Ana ekran</button>`;
+document.getElementById('again').onclick=()=>{S={n:0,ok:0,ses:{},miss:{}};seen=new Set();next()};document.getElementById('hm').onclick=home}
+home();
+</script></body></html>
